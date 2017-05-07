@@ -66,4 +66,3 @@ void onLostUser(SimpleOpenNI curContext, int userId) {
  ----------------------------------------------------------------*/
 void onVisibleUser(SimpleOpenNI curContext, int userId) {
 } //void onVisibleUser(SimpleOpenNI curContext, int userId)
-

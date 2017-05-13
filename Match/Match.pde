@@ -61,6 +61,7 @@ int[] levelDuration = {
 };
 int startTime = 0;
 boolean hasStarted = false;
+boolean isTimeout = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
@@ -130,7 +131,7 @@ void draw() {
     drawScene("Level 2");
     break;
   case 5:
-    drawScene("Thank You");
+    drawLose();
     break;
   default:
     break;
@@ -155,7 +156,7 @@ void draw() {
         getPosition(userID[i]);
         convertPosition();
         if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
-          if (bComplete == false) {
+          if (!bComplete && !isTimeout) {
             drawSkeleton(userID[i]);
             drawPosition();
             checkSwap();
@@ -167,14 +168,22 @@ void draw() {
               int temptime = millis();
               while (millis () - temptime < 2000)
                 ;
+              hasStarted = false;
               bComplete = true;
             }
+          } else if (!bComplete && isTimeout) {
+            println("whhhhhhhhaaaaaat");
+            isTimeout = false;
+            currentScene = 5;
           } else {
             drawButton();
             imageMode(CENTER);
             image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
           }
-        } 
+        } else if (currentScene == 5) {
+          imageMode(CENTER);
+          image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
+        }
       }
     }
   }
@@ -205,7 +214,7 @@ void checkSwap() {
 
 void unlock() {
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    if (locked[i] == false)
+    if (!locked[i])
       continue;
 
     locked[i] = false;

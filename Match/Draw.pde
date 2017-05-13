@@ -53,7 +53,9 @@ void drawScene(String title) {
     startTime = millis();
     hasStarted = true;
   }
-  drawCountdown();
+  if(!bComplete && !isTimeout) {
+    drawCountdown();
+  }
 }
 
 void drawShutter() {
@@ -97,20 +99,43 @@ void drawButton() {
   image(img, width-400, height-300, 100, 100);
 }
 
+void drawLose() {
+  textFont(font, 60);
+  textAlign(LEFT);
+  text("You Lose!", 50, 60);
+  
+  pushStyle();
+  fill(255);
+  rect(width-400, height-300, 200, 100);
+  fill(0);
+  textFont(font, 60);
+  textAlign(CENTER);
+  text("Restart", width-300, height-225);
+  popStyle(); 
+  
+  double distance = sqrt(pow(bodyPosition[0].x-(width-300), 2) + pow(bodyPosition[0].y-(height-250), 2));
+  if (distance < 100) {
+    bContinue = true;
+  } else if (bContinue) {
+    bContinue = false;
+    currentScene = currentLevel + 1;
+    setLevel();
+  }
+}
+
 void drawCountdown() {
-  if(!bComplete) {
-    int currentTime = millis() - startTime;
-    int currentDuration = levelDuration[currentLevel] * 1000;
-    if(currentTime < currentDuration) {
-      int currentProgress = (int)map(currentTime, 0, currentDuration, 0, width/2);
-      pushStyle();
-      fill(255);
-      rect(width/4, 40, width/2, 10);
-      fill(0);
-      rect(width/4, 40, currentProgress, 10);
-      popStyle();
-    } else {
-    
-    }
+  int currentTime = millis() - startTime;
+  int currentDuration = levelDuration[currentLevel] * 1000;
+  if(currentTime < currentDuration) {
+    int currentProgress = (int)map(currentTime, 0, currentDuration, 0, width/2);
+    pushStyle();
+    fill(255);
+    rect(width/4, 40, width/2, 10);
+    fill(0);
+    rect(width/4, 40, currentProgress, 10);
+    popStyle();
+  } else {
+    isTimeout = true;
+    hasStarted = false;
   }
 }

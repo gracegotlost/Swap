@@ -23,7 +23,7 @@ color[] userColor = new color[] {
 
 // position of head
 PImage headImage;
-float headSize = 100;
+float headSize = 120;
 
 // threshold of level of confidence
 float confidenceLevel = 0.5;
@@ -148,8 +148,8 @@ void draw() {
         convertPosition();
         if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
           if (bComplete == false) {
-            drawPosition();
             drawSkeleton(userID[i]);
+            drawPosition();
             checkSwap();
             unlock();
             if (checkComplete()) {
@@ -162,9 +162,9 @@ void draw() {
               bComplete = true;
             }
           } else {
-            imageMode(CORNER);
-            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y);
             drawButton();
+            imageMode(CENTER);
+            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
           }
         } 
       }
@@ -255,7 +255,7 @@ void drawPosition() {
   image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
   
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y);
+    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, 100, 100);
   }
 }
 

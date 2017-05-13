@@ -37,13 +37,13 @@ PVector confidenceVector = new PVector();
  ----------------------------------------------------------------*/
 
 String[] imageName = {
-  "lefthand.png", "righthand.png", "leftfoot.png", "rightfoot.png", 
-  "leftelbow.png", "rightelbow.png", "lefthand.png", "lefthand.png", "lefthand.png"
+  "righthand.png", "lefthand.png", "rightfoot.png", "leftfoot.png", 
+  "rightelbow.png", "leftelbow.png"
 };
 PVector[] bodyPosition = new PVector[15];
-PImage[] imageBody = new PImage[9];
-int[] imageOrder = new int[9];
-boolean[] locked = new boolean[9];
+PImage[] imageBody = new PImage[6];
+int[] imageOrder = new int[6];
+boolean[] locked = new boolean[6];
 AudioPlayer player;
 Minim minim;
 
@@ -53,7 +53,7 @@ Minim minim;
 int currentLevel = 1;
 int currentScene = 1;
 int[] bodyPart = {
-  0, 2, 4, 6, 8, 9
+  0, 2, 4, 6
 };
 int starttime = 0;
 boolean bComplete = false;
@@ -116,13 +116,13 @@ void draw() {
     drawSecondScene();
     break;
   case 3:
-    drawScene("Level 1", "", false);
+    drawScene("Level 1", "");
     break;
   case 4:
-    drawScene("Level 2", "", false);
+    drawScene("Level 2", "");
     break;
   case 5:
-    drawScene("Thank You", "Everybody, come to try!", false);
+    drawScene("Thank You", "Everybody, come to try!");
     break;
   default:
     break;
@@ -145,9 +145,9 @@ void draw() {
       if (confidence > confidenceLevel)
       {
         getPosition(userID[i]);
+        convertPosition();
         if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
           if (bComplete == false) {
-            convertPosition();
             drawPosition();
             drawSkeleton(userID[i]);
             checkSwap();
@@ -162,10 +162,8 @@ void draw() {
               bComplete = true;
             }
           } else {
-            PImage img = loadImage("instruction3.png");
             imageMode(CORNER);
-            //image(img, 700 - bodyPosition[8].x, bodyPosition[8].y);
-            image(imageBody[1], width-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, width), map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, height));
+            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y);
             drawButton();
           }
         } 
@@ -261,7 +259,7 @@ void drawPosition() {
   }
 }
 
-void drawScene(String title, String content, boolean bButton) {
+void drawScene(String title, String content) {
   // title
   textFont(font, 60);
   textAlign(CENTER);
@@ -271,9 +269,6 @@ void drawScene(String title, String content, boolean bButton) {
   textFont(font, 30);
   textAlign(LEFT);
   text(content, 50, 150);
-
-  if (bButton)
-    drawButton();
 }
 
 void drawFirstScene() {
@@ -306,8 +301,6 @@ void drawSecondScene() {
   PImage img = loadImage("tutorial.jpg");
   imageMode(CORNER);
   image(img, 0, 0);
-
-  drawButton();
 }
 
 void drawShutter() {
@@ -335,11 +328,9 @@ void drawShutter() {
 }
 
 void drawButton() {
-  float x = width-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, width);
-  float y = map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, height);
   // continue button
   PImage img = loadImage("button.png");
-  double distance = sqrt(pow(x-(width-400), 2) + pow(y-(height-300), 2));
+  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
   if (distance < 100) {
     img = loadImage("button2.png");
     bContinue = true;

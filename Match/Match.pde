@@ -56,7 +56,11 @@ int currentScene = 1;
 int[] bodyPart = {
   0, 2, 4, 6
 };
-int starttime = 0;
+int[] levelDuration = {
+  0, 0, 20, 30
+};
+int startTime = 0;
+boolean hasStarted = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
@@ -120,13 +124,13 @@ void draw() {
     drawSecondScene();
     break;
   case 3:
-    drawScene("Level 1", "");
+    drawScene("Level 1");
     break;
   case 4:
-    drawScene("Level 2", "");
+    drawScene("Level 2");
     break;
   case 5:
-    drawScene("Thank You", "Everybody, come to try!");
+    drawScene("Thank You");
     break;
   default:
     break;
@@ -173,31 +177,6 @@ void draw() {
         } 
       }
     }
-  }
-}
-
-void setLevel() {
-  bComplete = false;
-  switch(currentLevel) {
-  case 1:
-    imageOrder[0] = 1;
-    imageOrder[1] = 0;
-    break;
-  case 2:
-    imageOrder[0] = 2;
-    imageOrder[1] = 3;
-    imageOrder[2] = 1;
-    imageOrder[3] = 0;
-    break;
-  case 3:
-    imageOrder[0] = 2;
-    imageOrder[1] = 4;
-    imageOrder[2] = 0;
-    imageOrder[3] = 1;
-    imageOrder[4] = 3;
-    break;
-  default:
-    break;
   }
 }
 
@@ -251,149 +230,8 @@ boolean checkComplete() {
   return true;
 }
 
-/*---------------------------------------------------------------
- Draw all positions of main body parts
- ----------------------------------------------------------------*/
-void drawPosition() {
-  imageMode(CENTER);
-  image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
-  
-  for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, 100, 100);
-  }
-}
-
-void drawScene(String title, String content) {
-  // title
-  textFont(font, 60);
-  textAlign(CENTER);
-  text(title, width/2, 100);
-
-  // content
-  textFont(font, 30);
-  textAlign(LEFT);
-  text(content, 50, 150);
-}
-
-void drawFirstScene() {
-   // bg
-  PImage img = loadImage("profile_bg.jpg");
-  imageMode(CORNER);
-  image(img, 0, 0);
-
-  // video frame
-  imageMode(CENTER);
-  image(kinectOpenNI.rgbImage(), width/2, height/2);
-  filter(GRAY);
-  
-  // cover
-  int offset = 10;
-  pushStyle();
-  fill(255);
-  rect(width/2 - kinectOpenNI.depthWidth()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
-  rect(width/2 + kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
-  popStyle();
-
-  // title
-  textFont(font, 60);
-  text("Take your head shot", width/2, 120);
-
-  drawShutter();
-}
-
-void drawSecondScene() {
-  PImage img = loadImage("tutorial.jpg");
-  imageMode(CORNER);
-  image(img, 0, 0);
-}
-
-void drawShutter() {
-  PImage img = loadImage("button.png");
-  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - height*7/8, 2));
-  
-  if (distance < img.width/2) {
-    img = loadImage("button2.png");
-    if (mousePressed) {
-      //take head screenshot
-      saveHeadShot();
-      headImage = loadImage("head.jpg");
-      headImage.mask(maskImage);
-      bContinue = true;
-    }
-  } 
-  
-  if (bContinue) {
-    bContinue = false;
-    currentScene++;
-    setLevel();
-  }
-  
-  imageMode(CENTER);
-  image(img, width/2, height*7/8, img.width, img.height);
-}
-
-void drawButton() {
-  // continue button
-  PImage img = loadImage("button.png");
-  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
-  if (distance < 100) {
-    img = loadImage("button2.png");
-    bContinue = true;
-  } else if (bContinue) {
-    bContinue = false;
-    currentScene++;
-    setLevel();
-  }
-  imageMode(CENTER);
-  image(img, width-400, height-300, 100, 100);
-}
-
 void saveHeadShot() {
   PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
   headShot.save("data/head.jpg");
-}
-
-/*---------------------------------------------------------------
- Get all positions of main body parts
- ----------------------------------------------------------------*/
-void getPosition(int userId) {
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, bodyPosition[0]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[0], bodyPosition[0]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, bodyPosition[1]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[1], bodyPosition[1]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_FOOT, bodyPosition[2]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[2], bodyPosition[2]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_FOOT, bodyPosition[3]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[3], bodyPosition[3]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, bodyPosition[4]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[4], bodyPosition[4]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, bodyPosition[5]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[5], bodyPosition[5]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_KNEE, bodyPosition[6]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[6], bodyPosition[6]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, bodyPosition[7]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[7], bodyPosition[7]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_HEAD, bodyPosition[8]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[8], bodyPosition[8]);
-
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_NECK, bodyPosition[9]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[9], bodyPosition[9]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, bodyPosition[10]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[10], bodyPosition[10]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, bodyPosition[11]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[11], bodyPosition[11]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_TORSO, bodyPosition[12]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[12], bodyPosition[12]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HIP, bodyPosition[13]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[13], bodyPosition[13]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HIP, bodyPosition[14]);
-  kinectOpenNI.convertRealWorldToProjective(bodyPosition[14], bodyPosition[14]);
-}
-
-void convertPosition() {
-  for (int i = 0; i < bodyPosition.length; i++) {
-    bodyPosition[i].x = width - map(bodyPosition[i].x, 0, kinectOpenNI.depthWidth(), width*0.1, width*0.9);
-    bodyPosition[i].y = map(bodyPosition[i].y, 0, kinectOpenNI.depthHeight(), height*0.1, height*0.9);
-  }
 }
 

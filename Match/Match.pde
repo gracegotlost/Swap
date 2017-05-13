@@ -23,6 +23,7 @@ color[] userColor = new color[] {
 
 // position of head
 PImage headImage;
+PImage maskImage;
 float headSize = 120;
 
 // threshold of level of confidence
@@ -99,6 +100,9 @@ void setup()
 
   // font init
   font = loadFont("YuppySC-Regular-72.vlw");
+  
+  // mask init
+  maskImage = loadImage("mask.png");
 }
 
 /*---------------------------------------------------------------
@@ -313,6 +317,7 @@ void drawShutter() {
       //take head screenshot
       saveHeadShot();
       headImage = loadImage("head.jpg");
+      headImage.mask(maskImage);
       bContinue = true;
     }
   } 

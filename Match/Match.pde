@@ -21,12 +21,9 @@ color[] userColor = new color[] {
   color(255, 255, 0), color(255, 0, 255), color(0, 255, 255)
 };
 
-// position of head to draw circle
-PVector headPosition = new PVector();
-// turn headPosition into scalar form
-float distanceScalar;
-// diameter of head drawn in pixels
-float headSize = 200;
+// position of head
+PImage headImage;
+float headSize = 100;
 
 // threshold of level of confidence
 float confidenceLevel = 0.5;
@@ -77,7 +74,6 @@ void setup()
   kinectOpenNI.enableUser();
 
   // set up style
-  imageMode(CENTER);
   textAlign(CENTER);
   strokeWeight(3);
   fill(0);
@@ -117,21 +113,15 @@ void draw() {
     drawFirstScene();
     break;
   case 2:
-    drawScene("Instruction", "You are cut into pieces and all your body parts\nare messed up. Swap body parts to make\nall of them in order.", true);
+    drawSecondScene();
     break;
   case 3:
-    drawThirdScene();
-    break;
-  case 4:
     drawScene("Level 1", "", false);
     break;
-  case 5:
+  case 4:
     drawScene("Level 2", "", false);
     break;
-  case 6:
-    drawScene("Level 3", "", false);
-    break;
-  case 7:
+  case 5:
     drawScene("Thank You", "Everybody, come to try!", false);
     break;
   default:
@@ -155,7 +145,7 @@ void draw() {
       if (confidence > confidenceLevel)
       {
         getPosition(userID[i]);
-        if (currentScene == 4 || currentScene == 5 || currentScene == 6) {
+        if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
           if (bComplete == false) {
             convertPosition();
             drawPosition();
@@ -175,11 +165,10 @@ void draw() {
             PImage img = loadImage("instruction3.png");
             imageMode(CORNER);
             //image(img, 700 - bodyPosition[8].x, bodyPosition[8].y);
-            image(imageBody[1], displayWidth-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, displayWidth), map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, displayHeight));
+            image(imageBody[1], width-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, width), map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, height));
             drawButton();
           }
-        } else
-          image(imageBody[1], displayWidth-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, displayWidth), map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, displayHeight));
+        } 
       }
     }
   }
@@ -264,11 +253,9 @@ boolean checkComplete() {
  Draw all positions of main body parts
  ----------------------------------------------------------------*/
 void drawPosition() {
-  // create a distance scalar related to the depth in z dimension
-  distanceScalar = (525/bodyPosition[8].z);
-  // draw the circle at the position of the head with the head size scaled by the distance scalar
-  ellipse(bodyPosition[8].x, bodyPosition[8].y, distanceScalar*headSize, distanceScalar*headSize);
-
+  imageMode(CENTER);
+  image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
+  
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
     image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y);
   }
@@ -290,50 +277,49 @@ void drawScene(String title, String content, boolean bButton) {
 }
 
 void drawFirstScene() {
+   // bg
+  PImage img = loadImage("profile_bg.jpg");
+  imageMode(CORNER);
+  image(img, 0, 0);
+
   // video frame
-  image(kinectOpenNI.rgbImage(), displayWidth/2, displayHeight/2);
+  imageMode(CENTER);
+  image(kinectOpenNI.rgbImage(), width/2, height/2);
+  filter(GRAY);
   
+  // cover
+  int offset = 10;
+  pushStyle();
+  fill(255);
+  rect(width/2 - kinectOpenNI.depthWidth()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
+  rect(width/2 + kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
+  popStyle();
+
   // title
   textFont(font, 60);
-  text("Take a head shot and join this game", width/2, 100);
+  text("Take your head shot", width/2, 120);
 
   drawShutter();
 }
 
-void drawThirdScene() {
-  // title
-  textFont(font, 60);
-  text("How to play", width/2, 100);
-
-  PImage img1 = loadImage("instruction1.png");
-  PImage img2 = loadImage("instruction2.png");
-  PImage img3 = loadImage("instruction3.png");
-  PImage headImg = loadImage("head.jpg");
-  image(img1, displayWidth/6, 150);
-  image(img2, displayWidth/2, 150);
-  image(img3, displayWidth*5/6, 150);
-  image(headImg, displayWidth/6, 150, 100, 100);
-  image(headImg, displayWidth/2, 150, 100, 100);
-  image(headImg, displayWidth*5/6, 150, 100, 100);
-
-  textFont(font, 24);
-  textAlign(LEFT);
-  text("1. Detect your body parts", 50, 500);
-  text("2. Touch two body parts to swap", 50, 550);
-  text("3. Make all body parts in order to complete this level", 50, 600);
+void drawSecondScene() {
+  PImage img = loadImage("tutorial.jpg");
+  imageMode(CORNER);
+  image(img, 0, 0);
 
   drawButton();
 }
 
 void drawShutter() {
   PImage img = loadImage("button.png");
-  double distance = sqrt(pow(mouseX - displayWidth/2, 2) + pow(mouseY - displayHeight*7/8, 2));
+  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - height*7/8, 2));
   
   if (distance < img.width/2) {
     img = loadImage("button2.png");
     if (mousePressed) {
       //take head screenshot
       saveHeadShot();
+      headImage = loadImage("head.jpg");
       bContinue = true;
     }
   } 
@@ -344,15 +330,16 @@ void drawShutter() {
     setLevel();
   }
   
-  image(img, displayWidth/2, displayHeight*7/8, img.width, img.height);
+  imageMode(CENTER);
+  image(img, width/2, height*7/8, img.width, img.height);
 }
 
 void drawButton() {
-  float x = displayWidth-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, displayWidth);
-  float y = map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, displayHeight);
+  float x = width-map(bodyPosition[0].x, 0, kinectOpenNI.depthWidth(), 0, width);
+  float y = map(bodyPosition[0].y, 0, kinectOpenNI.depthHeight(), 0, height);
   // continue button
   PImage img = loadImage("button.png");
-  double distance = sqrt(pow(x-(displayWidth-400), 2) + pow(y-(displayHeight-400), 2));
+  double distance = sqrt(pow(x-(width-400), 2) + pow(y-(height-300), 2));
   if (distance < 100) {
     img = loadImage("button2.png");
     bContinue = true;
@@ -361,11 +348,12 @@ void drawButton() {
     currentScene++;
     setLevel();
   }
-  image(img, displayWidth-400, displayHeight-400, 100, 100);
+  imageMode(CENTER);
+  image(img, width-400, height-300, 100, 100);
 }
 
 void saveHeadShot() {
-  PImage headShot = get(displayWidth/2 - kinectOpenNI.depthHeight()/2, displayHeight/2 - kinectOpenNI.depthHeight()/2, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
+  PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
   headShot.save("data/head.jpg");
 }
 
@@ -408,8 +396,8 @@ void getPosition(int userId) {
 
 void convertPosition() {
   for (int i = 0; i < bodyPosition.length; i++) {
-    bodyPosition[i].x = bodyPosition[i].x * displayWidth / kinectOpenNI.depthWidth();
-    bodyPosition[i].y = bodyPosition[i].y * displayHeight / kinectOpenNI.depthHeight();
+    bodyPosition[i].x = width - map(bodyPosition[i].x, 0, kinectOpenNI.depthWidth(), width*0.1, width*0.9);
+    bodyPosition[i].y = map(bodyPosition[i].y, 0, kinectOpenNI.depthHeight(), height*0.1, height*0.9);
   }
 }
 

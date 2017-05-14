@@ -16,7 +16,7 @@ PImage kinectDepth;
 // int of each user being  tracked
 int[] userID;
 // user colors
-color[] userColor = new color[] { 
+color[] userColor = new color[] {
   color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), 
   color(255, 255, 0), color(255, 0, 255), color(0, 255, 255)
 };
@@ -65,6 +65,7 @@ boolean isTimeout = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
+PImage levelBG;
 /*---------------------------------------------------------------
  Starts new kinect object and enables skeleton tracking. 
  Draws window
@@ -97,17 +98,19 @@ void setup()
     imageOrder[i] = i;
   }
 
+  // level init
   setLevel();
 
-  //sount init
+  // sound init
   minim = new Minim(this);
   player = minim.loadFile("ka.mp3", 2048);
 
   // font init
   font = loadFont("YuppySC-Regular-72.vlw");
   
-  // mask init
+  // image init
   maskImage = loadImage("mask.png");
+  levelBG = loadImage("level_bg.png");
 }
 
 /*---------------------------------------------------------------

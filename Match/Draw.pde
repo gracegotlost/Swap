@@ -11,10 +11,10 @@ void drawPosition() {
 }
 
 void drawFirstScene() {
-   // bg
-  PImage img = loadImage("profile_bg.jpg");
+  // bg
+  PImage img = loadImage("profile_bg.png");
   imageMode(CORNER);
-  image(img, 0, 0);
+  image(img, 0, 0, width, height);
 
   // video frame
   imageMode(CENTER);
@@ -29,20 +29,20 @@ void drawFirstScene() {
   rect(width/2 + kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
   popStyle();
 
-  // title
-  textFont(font, 60);
-  text("Take your head shot", width/2, 120);
-
   drawShutter();
 }
 
 void drawSecondScene() {
-  PImage img = loadImage("tutorial.jpg");
+  PImage img = loadImage("tutorial.png");
   imageMode(CORNER);
-  image(img, 0, 0);
+  image(img, 0, 0, width, height);
 }
 
 void drawScene(String title) {
+  // level bg
+  imageMode(CORNER);
+  image(levelBG, 0, 0, width, height);
+  
   // title
   textFont(font, 60);
   textAlign(LEFT);

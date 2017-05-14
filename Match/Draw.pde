@@ -3,7 +3,9 @@
  ----------------------------------------------------------------*/
 void drawPosition() {
   imageMode(CENTER);
-  image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
+  if(currentLevel < 3) {
+    image(imageBody[4], bodyPosition[4].x, bodyPosition[4].y, partSize, partSize);
+  }
   
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
     image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
@@ -75,8 +77,6 @@ void drawShutter() {
     if (mousePressed) {
       //take head screenshot
       saveHeadShot();
-      headImage = loadImage("head.jpg");
-      headImage.mask(maskImage);
       bContinue = true;
     }
   } 

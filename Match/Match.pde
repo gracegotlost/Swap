@@ -22,9 +22,7 @@ color[] userColor = new color[] {
 };
 
 // position of head
-PImage headImage;
 PImage maskImage;
-float headSize = 120;
 
 // threshold of level of confidence
 float confidenceLevel = 0.5;
@@ -42,9 +40,9 @@ String[] imageName = {
   "rightelbow.png", "leftelbow.png"
 };
 PVector[] bodyPosition = new PVector[15];
-PImage[] imageBody = new PImage[6];
-int[] imageOrder = new int[6];
-boolean[] locked = new boolean[6];
+PImage[] imageBody = new PImage[7];
+int[] imageOrder = new int[7];
+boolean[] locked = new boolean[7];
 AudioPlayer player;
 Minim minim;
 
@@ -57,10 +55,10 @@ int btnWidth = 240;
 int btnHeight = 88;
 int partSize = 120;
 int[] bodyPart = {
-  0, 2, 4, 6
+  0, 2, 4, 5, 7
 };
 int[] levelDuration = {
-  0, 0, 20, 30
+  0, 0, 20, 30, 40
 };
 int startTime = 0;
 int startOpacity = 0;
@@ -99,11 +97,6 @@ void setup()
     bodyPosition[i] = new PVector();
   }
 
-  for (int i = 0; i < imageBody.length; i++) {
-    imageBody[i] = loadImage(imageName[i]);
-    imageOrder[i] = i;
-  }
-
   // level init
   setLevel();
 
@@ -140,6 +133,9 @@ void draw() {
     drawScene("Level 2");
     break;
   case 5:
+    drawScene("Level 3");
+    break;
+  case 6:
     drawLose();
     break;
   default:
@@ -164,7 +160,7 @@ void draw() {
       {
         getPosition(userID[i]);
         convertPosition();
-        if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
+        if (currentScene >= 2 && currentScene <= 5) {
           if (!bComplete && !isTimeout) {
             drawSkeleton(userID[i]);
             drawPosition();
@@ -185,13 +181,13 @@ void draw() {
             isPlayingAnim = true;
             currentOpacity = 0;
             startOpacity = millis();
-            currentScene = 5;
+            currentScene = 6;
           } else {
             drawButton();
             imageMode(CENTER);
             image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
           }
-        } else if (currentScene == 5) {
+        } else if (currentScene == 6) {
           imageMode(CENTER);
           image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
         }
@@ -253,5 +249,13 @@ boolean checkComplete() {
 void saveHeadShot() {
   PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - 40, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
   headShot.save("data/head.jpg");
+  imageName = splice(imageName, "head.jpg", 4); 
+  
+  for (int i = 0; i < imageBody.length; i++) {
+    imageBody[i] = loadImage(imageName[i]);
+    imageOrder[i] = i;
+  }
+  
+  imageBody[4].mask(maskImage);
 }
 

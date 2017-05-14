@@ -16,7 +16,7 @@ PImage kinectDepth;
 // int of each user being  tracked
 int[] userID;
 // user colors
-color[] userColor = new color[] { 
+color[] userColor = new color[] {
   color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), 
   color(255, 255, 0), color(255, 0, 255), color(0, 255, 255)
 };
@@ -61,9 +61,11 @@ int[] levelDuration = {
 };
 int startTime = 0;
 boolean hasStarted = false;
+boolean isTimeout = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
+PImage levelBG;
 /*---------------------------------------------------------------
  Starts new kinect object and enables skeleton tracking. 
  Draws window
@@ -96,17 +98,19 @@ void setup()
     imageOrder[i] = i;
   }
 
+  // level init
   setLevel();
 
-  //sount init
+  // sound init
   minim = new Minim(this);
   player = minim.loadFile("ka.mp3", 2048);
 
   // font init
   font = loadFont("YuppySC-Regular-72.vlw");
   
-  // mask init
+  // image init
   maskImage = loadImage("mask.png");
+  levelBG = loadImage("level_bg.png");
 }
 
 /*---------------------------------------------------------------
@@ -130,7 +134,7 @@ void draw() {
     drawScene("Level 2");
     break;
   case 5:
-    drawScene("Thank You");
+    drawLose();
     break;
   default:
     break;
@@ -155,7 +159,7 @@ void draw() {
         getPosition(userID[i]);
         convertPosition();
         if (currentScene == 2 || currentScene == 3 || currentScene == 4) {
-          if (bComplete == false) {
+          if (!bComplete && !isTimeout) {
             drawSkeleton(userID[i]);
             drawPosition();
             checkSwap();
@@ -167,14 +171,22 @@ void draw() {
               int temptime = millis();
               while (millis () - temptime < 2000)
                 ;
+              hasStarted = false;
               bComplete = true;
             }
+          } else if (!bComplete && isTimeout) {
+            println("whhhhhhhhaaaaaat");
+            isTimeout = false;
+            currentScene = 5;
           } else {
             drawButton();
             imageMode(CENTER);
             image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
           }
-        } 
+        } else if (currentScene == 5) {
+          imageMode(CENTER);
+          image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
+        }
       }
     }
   }
@@ -205,7 +217,7 @@ void checkSwap() {
 
 void unlock() {
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    if (locked[i] == false)
+    if (!locked[i])
       continue;
 
     locked[i] = false;

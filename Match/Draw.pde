@@ -6,7 +6,7 @@ void drawPosition() {
   image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
   
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, 100, 100);
+    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
   }
 }
 
@@ -18,15 +18,22 @@ void drawFirstScene() {
 
   // video frame
   imageMode(CENTER);
-  image(kinectOpenNI.rgbImage(), width/2, height/2);
+  image(kinectOpenNI.rgbImage(), width/2, height/2-40);
   filter(GRAY);
   
   // cover
-  int offset = 10;
+  int offset = 50;
   pushStyle();
   fill(255);
+  stroke(255);
+  strokeWeight(0);
   rect(width/2 - kinectOpenNI.depthWidth()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
   rect(width/2 + kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
+  fill(0, 0);
+  stroke(0);
+  strokeWeight(8);
+  rectMode(CENTER);
+  rect(width/2, height/2-40, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
   popStyle();
 
   drawShutter();
@@ -44,9 +51,10 @@ void drawScene(String title) {
   image(levelBG, 0, 0, width, height);
   
   // title
+  
   textFont(font, 60);
   textAlign(LEFT);
-  text(title, 50, 60);
+  text(title, 50, 80);
   
   // time count down
   if(!hasStarted) {
@@ -59,11 +67,11 @@ void drawScene(String title) {
 }
 
 void drawShutter() {
-  PImage img = loadImage("button.png");
-  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - height*7/8, 2));
+  PImage img = loadImage("cheese.png");
+  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - (height*7/8-30), 2));
   
-  if (distance < img.width/2) {
-    img = loadImage("button2.png");
+  if (distance < btnWidth/2) {
+    img = loadImage("cheese_hover.png");
     if (mousePressed) {
       //take head screenshot
       saveHeadShot();
@@ -80,15 +88,15 @@ void drawShutter() {
   }
   
   imageMode(CENTER);
-  image(img, width/2, height*7/8, img.width, img.height);
+  image(img, width/2, height*7/8-30, btnWidth, btnHeight);
 }
 
 void drawButton() {
   // continue button
-  PImage img = loadImage("button.png");
+  PImage img = loadImage("next.png");
   double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
   if (distance < 100) {
-    img = loadImage("button2.png");
+    img = loadImage("next_hover.png");
     bContinue = true;
   } else if (bContinue) {
     bContinue = false;
@@ -96,25 +104,38 @@ void drawButton() {
     setLevel();
   }
   imageMode(CENTER);
-  image(img, width-400, height-300, 100, 100);
+  image(img, width-400, height-300, btnWidth, btnHeight);
 }
 
 void drawLose() {
+  if(isPlayingAnim) {
+    currentOpacity = map(millis()-startOpacity, 0, 1000, 0, 255);
+    if(millis()-startOpacity > 1000) {
+      isPlayingAnim = false;
+    }
+  } else {
+    currentOpacity = 255;
+  }
+  
+  PImage animateImg = loadImage("level_bg_dead.png");
+  imageMode(CORNER);
+  pushStyle();
+  tint(255, currentOpacity);
+  image(animateImg, 0, 0, width, height);
+  popStyle();
+  
   textFont(font, 60);
   textAlign(LEFT);
-  text("You Lose!", 50, 60);
+  text("BOOOOO!", 50, 80);
   
-  pushStyle();
-  fill(255);
-  rect(width-400, height-300, 200, 100);
-  fill(0);
-  textFont(font, 60);
-  textAlign(CENTER);
-  text("Restart", width-300, height-225);
-  popStyle(); 
+  PImage img = loadImage("restart.png");
+  imageMode(CENTER);
+  image(img, width-400, height-300, btnWidth, btnHeight);
   
-  double distance = sqrt(pow(bodyPosition[0].x-(width-300), 2) + pow(bodyPosition[0].y-(height-250), 2));
+  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
   if (distance < 100) {
+    img = loadImage("restart_hover.png");
+    image(img, width-400, height-300, btnWidth, btnHeight);
     bContinue = true;
   } else if (bContinue) {
     bContinue = false;
@@ -130,9 +151,9 @@ void drawCountdown() {
     int currentProgress = (int)map(currentTime, 0, currentDuration, 0, width/2);
     pushStyle();
     fill(255);
-    rect(width/4, 40, width/2, 10);
+    rect(width/4, 50, width/2, 10);
     fill(0);
-    rect(width/4, 40, currentProgress, 10);
+    rect(width/4, 50, currentProgress, 10);
     popStyle();
   } else {
     isTimeout = true;

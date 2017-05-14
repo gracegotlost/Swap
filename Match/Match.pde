@@ -53,6 +53,9 @@ Minim minim;
  ----------------------------------------------------------------*/
 int currentLevel = 1;
 int currentScene = 1;
+int btnWidth = 240;
+int btnHeight = 88;
+int partSize = 120;
 int[] bodyPart = {
   0, 2, 4, 6
 };
@@ -60,8 +63,11 @@ int[] levelDuration = {
   0, 0, 20, 30
 };
 int startTime = 0;
+int startOpacity = 0;
+float currentOpacity = 0;
 boolean hasStarted = false;
 boolean isTimeout = false;
+boolean isPlayingAnim = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
@@ -106,7 +112,7 @@ void setup()
   player = minim.loadFile("ka.mp3", 2048);
 
   // font init
-  font = loadFont("YuppySC-Regular-72.vlw");
+  font = loadFont("DKDirrrty-72.vlw");
   
   // image init
   maskImage = loadImage("mask.png");
@@ -175,17 +181,19 @@ void draw() {
               bComplete = true;
             }
           } else if (!bComplete && isTimeout) {
-            println("whhhhhhhhaaaaaat");
             isTimeout = false;
+            isPlayingAnim = true;
+            currentOpacity = 0;
+            startOpacity = millis();
             currentScene = 5;
           } else {
             drawButton();
             imageMode(CENTER);
-            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
+            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
           }
         } else if (currentScene == 5) {
           imageMode(CENTER);
-          image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, 100, 100);
+          image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
         }
       }
     }
@@ -243,7 +251,7 @@ boolean checkComplete() {
 }
 
 void saveHeadShot() {
-  PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
+  PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - 40, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
   headShot.save("data/head.jpg");
 }
 

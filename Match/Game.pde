@@ -11,6 +11,11 @@ void gamePlaying(int i) {
 void gamePlayingLastLevel(int i) {
   drawSkeleton(userID[i]);
   drawPositionLastLevel();
+  checkSwap();
+  unlock();
+  if (checkComplete()) {
+    gameComplete();
+  }
 }
 
 void gameOver() {

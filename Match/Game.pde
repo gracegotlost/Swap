@@ -27,3 +27,53 @@ void gameNext() {
   imageMode(CENTER);
   image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
 }
+
+/*---------------------------------------------------------------
+ If any two of body parts touch each other, then swap these two parts on the screen
+ ----------------------------------------------------------------*/
+void checkSwap() {
+  for (int i = 0; i < bodyPart[currentLevel]; i++) {
+    if (locked[i])
+      continue;
+    for (int j = 0; j < i; j++) {
+      if (locked[j])
+        continue;
+      float x = bodyPosition[i].x - bodyPosition[j].x;
+      float y = bodyPosition[i].y - bodyPosition[j].y;
+      double distance = sqrt(pow(x, 2) + pow(y, 2));
+      if (distance < 50 ) {
+        int temp = imageOrder[i];
+        imageOrder[i] = imageOrder[j];
+        imageOrder[j] = temp;
+        locked[i] = locked[j] = true;
+      }
+    }
+  }
+}
+
+void unlock() {
+  for (int i = 0; i < bodyPart[currentLevel]; i++) {
+    if (!locked[i])
+      continue;
+
+    locked[i] = false;
+    for (int j = 0; j < bodyPart[currentLevel] && j != i; j++) {
+      float x = bodyPosition[i].x - bodyPosition[j].x;
+      float y = bodyPosition[i].y - bodyPosition[j].y;
+      double distance = sqrt(pow(x, 2) + pow(y, 2));
+      if (distance < 100)
+        locked[i] = true;
+    }
+  }
+}
+
+/*---------------------------------------------------------------
+ If all images are in order, then this level is completed
+ ----------------------------------------------------------------*/
+boolean checkComplete() {
+  for (int i = 0; i < bodyPart[currentLevel]; i++)
+    if (locked[i] || imageOrder[i] != i)
+      return false;
+
+  return true;
+}

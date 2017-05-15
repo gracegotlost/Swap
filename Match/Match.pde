@@ -11,8 +11,6 @@ import ddf.minim.*;
  ----------------------------------------------------------------*/
 // create kinect object for skeleton tracking
 SimpleOpenNI  kinectOpenNI;
-// image storage from kinect
-PImage kinectDepth;
 // int of each user being  tracked
 int[] userID;
 // user colors
@@ -20,10 +18,6 @@ color[] userColor = new color[] {
   color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), 
   color(255, 255, 0), color(255, 0, 255), color(0, 255, 255)
 };
-
-// position of head
-PImage maskImage;
-
 // threshold of level of confidence
 float confidenceLevel = 0.5;
 // the current confidence level that the kinect is tracking
@@ -34,11 +28,12 @@ PVector confidenceVector = new PVector();
 /*---------------------------------------------------------------
  My Variables
  ----------------------------------------------------------------*/
-
 String[] imageName = {
   "righthand.png", "lefthand.png", "rightfoot.png", "leftfoot.png", 
   "rightelbow.png", "leftelbow.png"
 };
+// head image mask
+PImage maskImage;
 PVector[] bodyPosition = new PVector[15];
 PImage[] imageBody = new PImage[7];
 int[] imageOrder = new int[7];
@@ -55,10 +50,10 @@ int btnWidth = 240;
 int btnHeight = 88;
 int partSize = 120;
 int[] bodyPart = {
-  0, 2, 4, 5, 7
+  0, 2, 4, 5, 7, 7
 };
 int[] levelDuration = {
-  0, 0, 20, 30, 40
+  0, 0, 20, 30, 40, 50
 };
 int startTime = 0;
 int startOpacity = 0;
@@ -118,30 +113,10 @@ void setup()
  ----------------------------------------------------------------*/
 void draw() {
   background(255);
-
-  switch(currentScene) {
-  case 1:
-    drawFirstScene();
-    break;
-  case 2:
-    drawSecondScene();
-    break;
-  case 3:
-    drawScene("Level 1");
-    break;
-  case 4:
-    drawScene("Level 2");
-    break;
-  case 5:
-    drawScene("Level 3");
-    break;
-  case 6:
-    drawLose();
-    break;
-  default:
-    break;
-  }
-
+  
+  // set current scene
+  setScene();
+  
   // update the camera
   kinectOpenNI.update();
   // get all user IDs of tracked users
@@ -162,34 +137,24 @@ void draw() {
         convertPosition();
         if (currentScene >= 2 && currentScene <= 5) {
           if (!bComplete && !isTimeout) {
-            drawSkeleton(userID[i]);
-            drawPosition();
-            checkSwap();
-            unlock();
-            if (checkComplete()) {
-              currentLevel++;
-              player.rewind(); 
-              player.play();
-              int temptime = millis();
-              while (millis () - temptime < 2000)
-                ;
-              hasStarted = false;
-              bComplete = true;
-            }
+            gamePlaying(i);
           } else if (!bComplete && isTimeout) {
-            isTimeout = false;
-            isPlayingAnim = true;
-            currentOpacity = 0;
-            startOpacity = millis();
-            currentScene = 6;
+            gameOver();
           } else {
             drawButton();
-            imageMode(CENTER);
-            image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
+            gameNext();
           }
         } else if (currentScene == 6) {
-          imageMode(CENTER);
-          image(imageBody[0], bodyPosition[0].x, bodyPosition[0].y, partSize, partSize);
+          if (!bComplete && !isTimeout) {
+          
+          } else if (!bComplete && isTimeout) {
+          
+          } else {
+            drawButton();
+            gameNext();
+          }
+        } else if (currentScene == 7) {
+            gameNext();
         }
       }
     }

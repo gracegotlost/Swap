@@ -12,6 +12,10 @@ void drawPosition() {
   }
 }
 
+void drawPositionLastLevel() {
+  imageMode(CENTER);
+}
+
 void drawFirstScene() {
   // bg
   PImage img = loadImage("profile_bg.png");

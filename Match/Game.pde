@@ -4,15 +4,13 @@ void gamePlaying(int i) {
   checkSwap();
   unlock();
   if (checkComplete()) {
-    currentLevel++;
-    player.rewind(); 
-    player.play();
-    int temptime = millis();
-    while (millis () - temptime < 2000)
-      ;
-    hasStarted = false;
-    bComplete = true;
+    gameComplete();
   }
+}
+
+void gamePlayingLastLevel(int i) {
+  drawSkeleton(userID[i]);
+  drawPositionLastLevel();
 }
 
 void gameOver() {
@@ -21,6 +19,21 @@ void gameOver() {
   currentOpacity = 0;
   startOpacity = millis();
   currentScene = 7;
+}
+
+void gameOverLastLevel() {
+  gameOver();
+}
+
+void gameComplete() {
+  currentLevel++;
+  player.rewind(); 
+  player.play();
+  int temptime = millis();
+  while (millis () - temptime < 2000)
+    ;
+  hasStarted = false;
+  bComplete = true;
 }
 
 void gameNext() {

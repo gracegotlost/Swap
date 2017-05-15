@@ -146,9 +146,9 @@ void draw() {
           }
         } else if (currentScene == 6) {
           if (!bComplete && !isTimeout) {
-          
+            gamePlayingLastLevel(i);
           } else if (!bComplete && isTimeout) {
-          
+            gameOverLastLevel();
           } else {
             drawButton();
             gameNext();

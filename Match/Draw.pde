@@ -24,11 +24,11 @@ void drawPositionLastLevel() {
 }
 
 void drawHead() {
-
+  image(imageBody[4], 100, 100, partSize, partSize);
 }
 
 void drawElbow() {
-
+  image(imageBody[5], 600, height/2, partSize, partSize);
 }
 
 void drawShutter() {
@@ -49,8 +49,8 @@ void drawShutter() {
     // for game
     currentScene++;
     // for testing
-//    currentScene = 6;
-//    currentLevel = 5;
+    currentScene = 6;
+    currentLevel = 5;
     setLevel();
   }
   

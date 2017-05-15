@@ -75,18 +75,5 @@ void drawLose() {
   textAlign(LEFT);
   text("BOOOOO!", 50, 80);
   
-  PImage img = loadImage("restart.png");
-  imageMode(CENTER);
-  image(img, width-400, height-300, btnWidth, btnHeight);
-  
-  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
-  if (distance < 100) {
-    img = loadImage("restart_hover.png");
-    image(img, width-400, height-300, btnWidth, btnHeight);
-    bContinue = true;
-  } else if (bContinue) {
-    bContinue = false;
-    currentScene = currentLevel + 1;
-    setLevel();
-  }
+  drawRestart();
 }

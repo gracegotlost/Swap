@@ -58,6 +58,8 @@ int[] levelDuration = {
 int startTime = 0;
 int startOpacity = 0;
 float currentOpacity = 0;
+boolean foundHead = true;
+boolean foundElbow = true;
 boolean hasStarted = false;
 boolean isTimeout = false;
 boolean isPlayingAnim = false;
@@ -150,7 +152,7 @@ void draw() {
           } else if (!bComplete && isTimeout) {
             gameOverLastLevel();
           } else {
-            drawButton();
+            drawRestart();
             gameNext();
           }
         } else if (currentScene == 7) {

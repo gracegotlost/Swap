@@ -53,9 +53,21 @@ void checkSwap() {
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
     if (locked[i])
       continue;
+    if (i == 0 && !foundHead) {
+      continue;
+    }
+    if (i == 3 && !foundElbow) {
+      continue;
+    }
     for (int j = 0; j < i; j++) {
       if (locked[j])
         continue;
+      if (j == 0 && !foundHead) {
+        continue;
+      }
+      if (j == 3 && !foundElbow) {
+        continue;
+      }
       float x = bodyPosition[i].x - bodyPosition[j].x;
       float y = bodyPosition[i].y - bodyPosition[j].y;
       double distance = sqrt(pow(x, 2) + pow(y, 2));
@@ -94,4 +106,14 @@ boolean checkComplete() {
       return false;
 
   return true;
+}
+
+void setFound() {
+  if (currentScene == 6) {
+    foundHead = false;
+    foundElbow = false;
+  } else {
+    foundHead = true;
+    foundElbow = true;
+  }
 }

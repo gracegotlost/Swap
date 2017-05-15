@@ -47,10 +47,10 @@ void drawShutter() {
   if (bContinue) {
     bContinue = false;
     // for game
-//    currentScene++;
+    currentScene++;
     // for testing
-    currentScene = 6;
-    currentLevel = 4;
+//    currentScene = 6;
+//    currentLevel = 5;
     setLevel();
   }
   
@@ -69,9 +69,33 @@ void drawButton() {
     bContinue = false;
     currentScene++;
     setLevel();
+    setFound();
   }
   imageMode(CENTER);
   image(img, width-400, height-300, btnWidth, btnHeight);
+}
+
+void drawRestart() {
+  PImage img = loadImage("restart.png");
+  imageMode(CENTER);
+  image(img, width-400, height-300, btnWidth, btnHeight);
+  
+  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
+  if (distance < 100) {
+    img = loadImage("restart_hover.png");
+    image(img, width-400, height-300, btnWidth, btnHeight);
+    bContinue = true;
+  } else if (bContinue) {
+    bContinue = false;
+    if(currentScene == 6 && bComplete) {
+      currentScene = 1;
+      currentLevel = 1;
+    } else {
+      currentScene = currentLevel + 1;
+      setLevel();
+    }
+    setFound();
+  }
 }
 
 void drawCountdown() {

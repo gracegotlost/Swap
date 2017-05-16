@@ -15,19 +15,23 @@ void drawPosition() {
 void drawPositionLastLevel() {
   imageMode(CENTER);
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    if (i != 0 && i != 3) {
-      image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
-    }
+    if (imageOrder[i] == -1)
+     continue;
+    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
   }
-  drawHead();
-  drawElbow();
+  if (!foundHead) {
+    drawHead();
+  }
+  if (!foundElbow) {
+    drawElbow();
+  }
   redrawScene("Level 4");
 }
 
 void drawHead() {
   int interval = millis()%7000;
-  float headX = width/10;
-  float headY = height/10;
+  headX = width/10;
+  headY = height/10;
   float headSize = 0.5;
   
   if (interval >= 0 && interval <= 100) {
@@ -69,7 +73,8 @@ void drawHead() {
 
 void drawElbow() {
   int interval = millis()%6000;
-  float elbowX = width*11/12;
+  elbowX = width*11/12;
+  elbowY = height/2-height/80;
   if (interval >= 0 && interval <= 100) {
     showElbow = true;
   }
@@ -86,7 +91,7 @@ void drawElbow() {
     }
   }
   
-  image(imageBody[5], elbowX, height/2-height/80, partSize, partSize);
+  image(imageBody[5], elbowX, elbowY, partSize, partSize);
 }
 
 void drawShutter() {
@@ -107,8 +112,8 @@ void drawShutter() {
     // for game
     currentScene++;
     // for testing
-    currentScene = 6;
-    currentLevel = 5;
+//    currentScene = 6;
+//    currentLevel = 5;
     setLevel();
   }
   

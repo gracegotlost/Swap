@@ -28,10 +28,10 @@ void setLevel() {
       imageOrder[6] = 1;
       break;
     case 5:
-      imageOrder[0] = 4;
+      imageOrder[0] = -1;
       imageOrder[1] = 6;
       imageOrder[2] = 0;
-      imageOrder[3] = 5;
+      imageOrder[3] = -1;
       imageOrder[4] = 3;
       imageOrder[5] = 1;
       imageOrder[6] = 2;

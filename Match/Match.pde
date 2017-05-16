@@ -49,6 +49,10 @@ int currentScene = 1;
 int btnWidth = 240;
 int btnHeight = 88;
 int partSize = 120;
+float headX = 0;
+float headY = 0;
+float elbowX = 0;
+float elbowY = 0;
 int[] bodyPart = {
   0, 2, 4, 5, 7, 7
 };
@@ -59,11 +63,11 @@ int startTime = 0;
 int startOpacity = 0;
 float currentOpacity = 0;
 // for game
-//boolean foundHead = true;
-//boolean foundElbow = true;
+boolean foundHead = true;
+boolean foundElbow = true;
 // for testing
-boolean foundHead = false;
-boolean foundElbow = false;
+//boolean foundHead = false;
+//boolean foundElbow = false;
 boolean showHead = false;
 boolean showElbow = false;
 boolean hasStarted = false;

@@ -58,8 +58,14 @@ int[] levelDuration = {
 int startTime = 0;
 int startOpacity = 0;
 float currentOpacity = 0;
-boolean foundHead = true;
-boolean foundElbow = true;
+// for game
+//boolean foundHead = true;
+//boolean foundElbow = true;
+// for testing
+boolean foundHead = false;
+boolean foundElbow = false;
+boolean showHead = false;
+boolean showElbow = false;
 boolean hasStarted = false;
 boolean isTimeout = false;
 boolean isPlayingAnim = false;

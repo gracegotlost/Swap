@@ -39,7 +39,6 @@ void drawScene(String title) {
   image(levelBG, 0, 0, width, height);
   
   // title
-  
   textFont(font, 60);
   textAlign(LEFT);
   text(title, 50, 80);
@@ -52,6 +51,17 @@ void drawScene(String title) {
   if(!bComplete && !isTimeout) {
     drawCountdown();
   }
+}
+
+void redrawScene(String title) {
+  // level bg
+  imageMode(CORNER);
+  image(levelBG, 0, 0, width, height);
+  
+  // title
+  textFont(font, 60);
+  textAlign(LEFT);
+  text(title, 50, 80);
 }
 
 void drawLose() {

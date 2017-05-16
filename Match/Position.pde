@@ -10,15 +10,15 @@ void getPosition(int userId) {
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[2], bodyPosition[2]);
   kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_FOOT, bodyPosition[3]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[3], bodyPosition[3]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, bodyPosition[4]);
+  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_HEAD, bodyPosition[4]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[4], bodyPosition[4]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, bodyPosition[5]);
+  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, bodyPosition[5]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[5], bodyPosition[5]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_KNEE, bodyPosition[6]);
+  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, bodyPosition[6]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[6], bodyPosition[6]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, bodyPosition[7]);
+  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_KNEE, bodyPosition[7]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[7], bodyPosition[7]);
-  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_HEAD, bodyPosition[8]);
+  kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, bodyPosition[8]);
   kinectOpenNI.convertRealWorldToProjective(bodyPosition[8], bodyPosition[8]);
 
   kinectOpenNI.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_NECK, bodyPosition[9]);

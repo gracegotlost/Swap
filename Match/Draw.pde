@@ -3,123 +3,161 @@
  ----------------------------------------------------------------*/
 void drawPosition() {
   imageMode(CENTER);
-  image(headImage, bodyPosition[8].x, bodyPosition[8].y, headSize, headSize);
+  if(currentLevel < 3) {
+    image(imageBody[4], bodyPosition[4].x, bodyPosition[4].y, partSize, partSize);
+  }
   
   for (int i = 0; i < bodyPart[currentLevel]; i++) {
-    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, 100, 100);
+    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
   }
 }
 
-void drawFirstScene() {
-  // bg
-  PImage img = loadImage("profile_bg.png");
-  imageMode(CORNER);
-  image(img, 0, 0, width, height);
-
-  // video frame
+void drawPositionLastLevel() {
   imageMode(CENTER);
-  image(kinectOpenNI.rgbImage(), width/2, height/2);
-  filter(GRAY);
-  
-  // cover
-  int offset = 10;
-  pushStyle();
-  fill(255);
-  rect(width/2 - kinectOpenNI.depthWidth()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
-  rect(width/2 + kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - offset, (kinectOpenNI.depthWidth() - kinectOpenNI.depthHeight())/2, kinectOpenNI.depthHeight() + 2*offset);
-  popStyle();
-
-  drawShutter();
+  for (int i = 0; i < bodyPart[currentLevel]; i++) {
+    if (imageOrder[i] == -1)
+     continue;
+    image(imageBody[imageOrder[i]], bodyPosition[i].x, bodyPosition[i].y, partSize, partSize);
+  }
+  if (!foundHead) {
+    drawHead();
+  }
+  if (!foundElbow) {
+    drawElbow();
+  }
+  redrawScene("Level 4");
 }
 
-void drawSecondScene() {
-  PImage img = loadImage("tutorial.png");
-  imageMode(CORNER);
-  image(img, 0, 0, width, height);
+void drawHead() {
+  int interval = millis()%7000;
+  headX = width/10;
+  headY = height/10;
+  float headSize = 0.5;
+  
+  if (interval >= 0 && interval <= 100) {
+    showHead = true;
+  }
+  
+  if (showHead) {
+    if (interval >= 0 && interval <= 1500) {
+      headX = map(interval, 0, 1500, width/8, width/5.3);
+      headY = map(interval, 0, 1500, height/8, height/4.5);
+      headSize = map(interval, 0, 1500, 0.5, 1);
+    } else if (interval > 1500 && interval <= 2000) {
+      headX = width/5.3;
+      headY = height/4.5;
+      headSize = 1;
+    } else if (interval > 2000 && interval <= 3500) {
+      headX = map(interval, 2000, 3500, width/5.3, width/8);
+      headY = map(interval, 2000, 3500, height/4.5, height/8);
+      headSize = map(interval, 2000, 3500, 1, 0.5);
+    } else if (interval > 3500 && interval <= 5000) {
+      headX = map(interval, 3500, 5000, width/8, width/5);
+      headY = height/2;
+      headSize = map(interval, 3500, 5000, 0.5, 1);
+    } else if (interval > 5000 && interval <= 6000) {
+      headX = map(interval, 5000, 6000, width/5, width/8);
+      headY = height/2;
+      headSize = map(interval, 5000, 6000, 1, 0.5);
+    } else {
+      showHead = false;
+    }
+  }
+  
+  pushMatrix();
+  translate(headX, headY);
+  scale(headSize);
+  image(imageBody[4], 0, 0, partSize, partSize);
+  popMatrix();
 }
 
-void drawScene(String title) {
-  // level bg
-  imageMode(CORNER);
-  image(levelBG, 0, 0, width, height);
-  
-  // title
-  textFont(font, 60);
-  textAlign(LEFT);
-  text(title, 50, 60);
-  
-  // time count down
-  if(!hasStarted) {
-    startTime = millis();
-    hasStarted = true;
+void drawElbow() {
+  int interval = millis()%6000;
+  elbowX = width*11/12;
+  elbowY = height/2-height/80;
+  if (interval >= 0 && interval <= 100) {
+    showElbow = true;
   }
-  if(!bComplete && !isTimeout) {
-    drawCountdown();
+  
+  if (showElbow) {
+    if (interval >= 0 && interval <= 1500) {
+      elbowX = map(interval, 0, 1500, width*11/12, width*10/12);
+    } else if (interval > 1500 && interval <= 2000) {
+      elbowX = width*10/12;
+    } else if (interval > 2000 && interval <= 3000) {
+      elbowX = map(interval, 2000, 3000, width*10/12, width*11/12);
+    } else {
+      showElbow = false;
+    }
   }
+  
+  image(imageBody[5], elbowX, elbowY, partSize, partSize);
 }
 
 void drawShutter() {
-  PImage img = loadImage("button.png");
-  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - height*7/8, 2));
+  PImage img = loadImage("cheese.png");
+  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - (height*7/8-30), 2));
   
-  if (distance < img.width/2) {
-    img = loadImage("button2.png");
+  if (distance < btnWidth/2) {
+    img = loadImage("cheese_hover.png");
     if (mousePressed) {
       //take head screenshot
       saveHeadShot();
-      headImage = loadImage("head.jpg");
-      headImage.mask(maskImage);
       bContinue = true;
     }
   } 
   
   if (bContinue) {
     bContinue = false;
+    // for game
     currentScene++;
+    // for testing
+//    currentScene = 6;
+//    currentLevel = 5;
     setLevel();
   }
   
   imageMode(CENTER);
-  image(img, width/2, height*7/8, img.width, img.height);
+  image(img, width/2, height*7/8-30, btnWidth, btnHeight);
 }
 
 void drawButton() {
   // continue button
-  PImage img = loadImage("button.png");
+  PImage img = loadImage("next.png");
   double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
   if (distance < 100) {
-    img = loadImage("button2.png");
+    img = loadImage("next_hover.png");
     bContinue = true;
   } else if (bContinue) {
     bContinue = false;
     currentScene++;
     setLevel();
+    setFound();
   }
   imageMode(CENTER);
-  image(img, width-400, height-300, 100, 100);
+  image(img, width-400, height-300, btnWidth, btnHeight);
 }
 
-void drawLose() {
-  textFont(font, 60);
-  textAlign(LEFT);
-  text("You Lose!", 50, 60);
+void drawRestart() {
+  PImage img = loadImage("restart.png");
+  imageMode(CENTER);
+  image(img, width-400, height-300, btnWidth, btnHeight);
   
-  pushStyle();
-  fill(255);
-  rect(width-400, height-300, 200, 100);
-  fill(0);
-  textFont(font, 60);
-  textAlign(CENTER);
-  text("Restart", width-300, height-225);
-  popStyle(); 
-  
-  double distance = sqrt(pow(bodyPosition[0].x-(width-300), 2) + pow(bodyPosition[0].y-(height-250), 2));
+  double distance = sqrt(pow(bodyPosition[0].x-(width-400), 2) + pow(bodyPosition[0].y-(height-300), 2));
   if (distance < 100) {
+    img = loadImage("restart_hover.png");
+    image(img, width-400, height-300, btnWidth, btnHeight);
     bContinue = true;
   } else if (bContinue) {
     bContinue = false;
-    currentScene = currentLevel + 1;
-    setLevel();
+    if(currentScene == 6 && bComplete) {
+      currentScene = 1;
+      currentLevel = 1;
+    } else {
+      currentScene = currentLevel + 1;
+      setLevel();
+    }
+    setFound();
   }
 }
 
@@ -130,9 +168,9 @@ void drawCountdown() {
     int currentProgress = (int)map(currentTime, 0, currentDuration, 0, width/2);
     pushStyle();
     fill(255);
-    rect(width/4, 40, width/2, 10);
+    rect(width/4, 50, width/2, 10);
     fill(0);
-    rect(width/4, 40, currentProgress, 10);
+    rect(width/4, 50, currentProgress, 10);
     popStyle();
   } else {
     isTimeout = true;

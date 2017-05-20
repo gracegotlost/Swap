@@ -37,6 +37,7 @@ PImage[] imageBody = new PImage[7];
 int[] imageOrder = new int[7];
 boolean[] locked = new boolean[7];
 AudioPlayer player;
+AudioPlayer bgMusic;
 Minim minim;
 
 /*---------------------------------------------------------------
@@ -49,6 +50,8 @@ int btnHeight = 88;
 int btnRight = 600;
 int btnBottom = 500;
 int partSize = 120;
+int countShow = 0;
+int countHide = 0;
 float headX = 0;
 float headY = 0;
 float elbowX = 0;
@@ -64,8 +67,7 @@ boolean foundElbow = true;
 //boolean foundElbow = false;
 boolean showHead = false;
 boolean showElbow = false;
-boolean bComplete = false;
-boolean bContinue = false;
+boolean countStarted = false;
 PFont font;
 PImage levelBG;
 /*---------------------------------------------------------------
@@ -107,6 +109,8 @@ void setup()
   // sound init
   minim = new Minim(this);
   player = minim.loadFile("ka.mp3", 2048);
+  bgMusic = minim.loadFile("theme.mp3", 2048);
+  bgMusic.loop();
 
   // font init
   font = loadFont("DKDirrrty-72.vlw");
@@ -130,6 +134,10 @@ void draw() {
   // get all user IDs of tracked users
   userID = kinectOpenNI.getUsers();
   
+  if (userID.length == 0) {
+    drawInstruction("stand at the blue line");
+  }
+  
   // loop through each user to see if tracking
   for (int i = 0; i < userID.length; i++) {
     // if Kinect is tracking certain user then get joint vectors
@@ -140,26 +148,20 @@ void draw() {
       if (confidence > confidenceLevel) {
         getPosition(userID[i]);
         convertPosition();
+        // check if its center user
+        if (bodyPosition[4].x <= width*0.3 || bodyPosition[4].x >= width*0.7) {
+          drawInstruction("stand in the middle");
+          continue;
+        }
         if (currentScene >= 1 && currentScene <= 3) {
-          if (!bComplete) {
-            gamePlaying(i);
-          } else {
-            drawButton();
-            gameNext();
-          }
+          gamePlaying(i);
         } else if (currentScene == 4) {
-          if (!bComplete) {
-            gamePlayingLastLevel(i);
-          } else {
-            drawRestart();
-            gameNext();
-          }
+          gamePlayingLastLevel(i);
         }
       } else {
-//          drawLostTrack();
+          drawInstruction("tracking you..");
       }
-    } else {
-//      drawLostTrack();
+      break;
     }
   }
 }

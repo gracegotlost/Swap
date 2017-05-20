@@ -94,48 +94,18 @@ void drawElbow() {
   image(imageBody[5], elbowX, elbowY, partSize, partSize);
 }
 
-void drawButton() {
-  // continue button
-  PImage img = loadImage("next.png");
-  double distance = sqrt(pow(bodyPosition[0].x-(width-btnRight), 2) + pow(bodyPosition[0].y-(height-btnBottom), 2));
-  if (distance < 100) {
-    img = loadImage("next_hover.png");
-    bContinue = true;
-  } else if (bContinue) {
-    bContinue = false;
-    currentScene++;
-    setLevel();
-    setFound();
+void drawInstruction(String instruct) {
+  if (millis() - countShow > 500 && countStarted) {
+    countStarted = false;
+    countHide = millis();
+  } else if (millis() - countHide > 500 && !countStarted) {
+    countStarted = true;
+    countShow = millis();
   }
-  imageMode(CENTER);
-  image(img, width-btnRight, height-btnBottom, btnWidth, btnHeight);
-}
-
-void drawRestart() {
-  PImage img = loadImage("restart.png");
-  imageMode(CENTER);
-  image(img, width-btnRight, height-btnBottom, btnWidth, btnHeight);
   
-  double distance = sqrt(pow(bodyPosition[0].x-(width-btnRight), 2) + pow(bodyPosition[0].y-(height-btnBottom), 2));
-  if (distance < 100) {
-    img = loadImage("restart_hover.png");
-    image(img, width-btnRight, height-btnBottom, btnWidth, btnHeight);
-    bContinue = true;
-  } else if (bContinue) {
-    bContinue = false;
-    if(currentScene == 6 && bComplete) {
-      currentScene = 1;
-      currentLevel = 1;
-    } else {
-      currentScene = currentLevel + 1;
-      setLevel();
-    }
-    setFound();
+  if (countStarted) {
+    textFont(font, 60);
+    textAlign(CENTER);
+    text(instruct, width/2, height/2);
   }
-}
-
-void drawLostTrack() {
-  textFont(font, 60);
-  textAlign(CENTER);
-  text("Tracking You..", width/2, height/2);
 }

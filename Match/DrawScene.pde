@@ -7,6 +7,11 @@ void drawScene(String title) {
   textFont(font, 60);
   textAlign(LEFT);
   text(title, 50, 80);
+  
+  // instruction
+  textFont(font, 60);
+  textAlign(CENTER);
+  text("swap your body parts", width/2, 80);
 }
 
 void redrawScene(String title) {

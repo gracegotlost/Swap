@@ -1,5 +1,4 @@
 void setLevel() {
-  bComplete = false;
   switch(currentLevel) {
     case 1:
       imageOrder[0] = 2;

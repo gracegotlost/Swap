@@ -21,13 +21,21 @@ void gamePlayingLastLevel(int i) {
 }
 
 void gameComplete() {
-  currentLevel++;
   player.rewind(); 
   player.play();
   int temptime = millis();
   while (millis () - temptime < 2000)
     ;
-  bComplete = true;
+    
+  if(currentScene == 4) {
+    currentScene = 1;
+    currentLevel = 1;
+  } else {
+    currentScene++;
+    currentLevel++;
+  }
+  setLevel();
+  setFound();
 }
 
 void gameNext() {

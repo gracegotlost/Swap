@@ -48,6 +48,8 @@ int currentLevel = 1;
 int currentScene = 1;
 int btnWidth = 240;
 int btnHeight = 88;
+int btnRight = 600;
+int btnBottom = 500;
 int partSize = 120;
 float headX = 0;
 float headY = 0;
@@ -57,7 +59,7 @@ int[] bodyPart = {
   0, 2, 4, 5, 7, 7
 };
 int[] levelDuration = {
-  0, 0, 20, 30, 40, 50
+  0, 0, 60, 60, 80, 100
 };
 int startTime = 0;
 int startOpacity = 0;
@@ -90,13 +92,14 @@ void setup()
   kinectOpenNI.enableRGB();
   // enable skeleton generation for all joints
   kinectOpenNI.enableUser();
-
+  
   // set up style
   textAlign(CENTER);
   strokeWeight(3);
   fill(0);
 
   // size
+//  size(1920, 1040);
   size(displayWidth, displayHeight);
 
   // set bodyPosition and image
@@ -133,18 +136,19 @@ void draw() {
   kinectOpenNI.update();
   // get all user IDs of tracked users
   userID = kinectOpenNI.getUsers();
-
+  
+  if (userID.length == 0 && currentScene != 1) {
+//    drawLostTrack();
+  }
+  
   // loop through each user to see if tracking
-  for (int i = 0; i < userID.length; i++)
-  {
+  for (int i = 0; i < userID.length; i++) {
     // if Kinect is tracking certain user then get joint vectors
-    if (kinectOpenNI.isTrackingSkeleton(userID[i]))
-    {
+    if (kinectOpenNI.isTrackingSkeleton(userID[i])) {
       // get confidence level that Kinect is tracking head
       confidence = kinectOpenNI.getJointPositionSkeleton(userID[i], SimpleOpenNI.SKEL_HEAD, confidenceVector);
       // if confidence of tracking is beyond threshold, then track user
-      if (confidence > confidenceLevel)
-      {
+      if (confidence > confidenceLevel) {
         getPosition(userID[i]);
         convertPosition();
         if (currentScene >= 2 && currentScene <= 5) {
@@ -168,6 +172,14 @@ void draw() {
         } else if (currentScene == 7) {
             gameNext();
         }
+      } else {
+          if (currentScene != 1) {
+//            drawLostTrack();
+          }
+      }
+    } else {
+      if (currentScene != 1) {
+//        drawLostTrack();
       }
     }
   }

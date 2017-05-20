@@ -111,7 +111,7 @@ void checkSwap() {
       float x = bodyPosition[i].x - bodyPosition[j].x;
       float y = bodyPosition[i].y - bodyPosition[j].y;
       double distance = sqrt(pow(x, 2) + pow(y, 2));
-      if (distance < 50 ) {
+      if (distance < 60 ) {
         int temp = imageOrder[i];
         imageOrder[i] = imageOrder[j];
         imageOrder[j] = temp;

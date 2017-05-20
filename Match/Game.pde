@@ -20,22 +20,6 @@ void gamePlayingLastLevel(int i) {
   }
 }
 
-void gameOver() {
-  isTimeout = false;
-  isPlayingAnim = true;
-  currentOpacity = 0;
-  startOpacity = millis();
-  currentScene = 7;
-}
-
-void gameOverLastLevel() {
-  foundHead = false;
-  foundElbow = false;
-  showHead = false;
-  showElbow = false;
-  gameOver();
-}
-
 void gameComplete() {
   currentLevel++;
   player.rewind(); 
@@ -43,7 +27,6 @@ void gameComplete() {
   int temptime = millis();
   while (millis () - temptime < 2000)
     ;
-  hasStarted = false;
   bComplete = true;
 }
 
@@ -149,7 +132,7 @@ boolean checkComplete() {
 }
 
 void setFound() {
-  if (currentScene == 6) {
+  if (currentScene == 4) {
     foundHead = false;
     foundElbow = false;
   } else {

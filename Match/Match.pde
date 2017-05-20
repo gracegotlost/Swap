@@ -30,10 +30,8 @@ PVector confidenceVector = new PVector();
  ----------------------------------------------------------------*/
 String[] imageName = {
   "righthand.png", "lefthand.png", "rightfoot.png", "leftfoot.png", 
-  "rightelbow.png", "leftelbow.png"
+  "head.png", "rightelbow.png", "leftelbow.png"
 };
-// head image mask
-PImage maskImage;
 PVector[] bodyPosition = new PVector[15];
 PImage[] imageBody = new PImage[7];
 int[] imageOrder = new int[7];
@@ -56,14 +54,8 @@ float headY = 0;
 float elbowX = 0;
 float elbowY = 0;
 int[] bodyPart = {
-  0, 2, 4, 5, 7, 7
+  0, 4, 5, 7, 7
 };
-int[] levelDuration = {
-  0, 0, 60, 60, 80, 100
-};
-int startTime = 0;
-int startOpacity = 0;
-float currentOpacity = 0;
 // for game
 boolean foundHead = true;
 boolean foundElbow = true;
@@ -72,9 +64,6 @@ boolean foundElbow = true;
 //boolean foundElbow = false;
 boolean showHead = false;
 boolean showElbow = false;
-boolean hasStarted = false;
-boolean isTimeout = false;
-boolean isPlayingAnim = false;
 boolean bComplete = false;
 boolean bContinue = false;
 PFont font;
@@ -106,6 +95,11 @@ void setup()
   for (int i = 0; i < bodyPosition.length; i++) {
     bodyPosition[i] = new PVector();
   }
+  
+  for (int i = 0; i < imageBody.length; i++) {
+    imageBody[i] = loadImage(imageName[i]);
+    imageOrder[i] = i;
+  }
 
   // level init
   setLevel();
@@ -118,7 +112,6 @@ void setup()
   font = loadFont("DKDirrrty-72.vlw");
   
   // image init
-  maskImage = loadImage("mask.png");
   levelBG = loadImage("level_bg.png");
 }
 
@@ -137,10 +130,6 @@ void draw() {
   // get all user IDs of tracked users
   userID = kinectOpenNI.getUsers();
   
-  if (userID.length == 0 && currentScene != 1) {
-//    drawLostTrack();
-  }
-  
   // loop through each user to see if tracking
   for (int i = 0; i < userID.length; i++) {
     // if Kinect is tracking certain user then get joint vectors
@@ -151,50 +140,27 @@ void draw() {
       if (confidence > confidenceLevel) {
         getPosition(userID[i]);
         convertPosition();
-        if (currentScene >= 2 && currentScene <= 5) {
-          if (!bComplete && !isTimeout) {
+        if (currentScene >= 1 && currentScene <= 3) {
+          if (!bComplete) {
             gamePlaying(i);
-          } else if (!bComplete && isTimeout) {
-            gameOver();
           } else {
             drawButton();
             gameNext();
           }
-        } else if (currentScene == 6) {
-          if (!bComplete && !isTimeout) {
+        } else if (currentScene == 4) {
+          if (!bComplete) {
             gamePlayingLastLevel(i);
-          } else if (!bComplete && isTimeout) {
-            gameOverLastLevel();
           } else {
             drawRestart();
             gameNext();
           }
-        } else if (currentScene == 7) {
-            gameNext();
         }
       } else {
-          if (currentScene != 1) {
-//            drawLostTrack();
-          }
+//          drawLostTrack();
       }
     } else {
-      if (currentScene != 1) {
-//        drawLostTrack();
-      }
+//      drawLostTrack();
     }
   }
-}
-
-void saveHeadShot() {
-  PImage headShot = get(width/2 - kinectOpenNI.depthHeight()/2, height/2 - kinectOpenNI.depthHeight()/2 - 40, kinectOpenNI.depthHeight(), kinectOpenNI.depthHeight());
-  headShot.save("data/head.jpg");
-  imageName = splice(imageName, "head.jpg", 4); 
-  
-  for (int i = 0; i < imageBody.length; i++) {
-    imageBody[i] = loadImage(imageName[i]);
-    imageOrder[i] = i;
-  }
-  
-  imageBody[4].mask(maskImage);
 }
 

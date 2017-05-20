@@ -3,7 +3,7 @@
  ----------------------------------------------------------------*/
 void drawPosition() {
   imageMode(CENTER);
-  if(currentLevel < 3) {
+  if(currentLevel == 1) {
     image(imageBody[4], bodyPosition[4].x, bodyPosition[4].y, partSize, partSize);
   }
   
@@ -94,33 +94,6 @@ void drawElbow() {
   image(imageBody[5], elbowX, elbowY, partSize, partSize);
 }
 
-void drawShutter() {
-  PImage img = loadImage("cheese.png");
-  double distance = sqrt(pow(mouseX - width/2, 2) + pow(mouseY - (height*7/8-30), 2));
-  
-  if (distance < btnWidth/2) {
-    img = loadImage("cheese_hover.png");
-    if (mousePressed) {
-      //take head screenshot
-      saveHeadShot();
-      bContinue = true;
-    }
-  } 
-  
-  if (bContinue) {
-    bContinue = false;
-    // for game
-    currentScene++;
-    // for testing
-//    currentScene = 6;
-//    currentLevel = 5;
-    setLevel();
-  }
-  
-  imageMode(CENTER);
-  image(img, width/2, height*7/8-30, btnWidth, btnHeight);
-}
-
 void drawButton() {
   // continue button
   PImage img = loadImage("next.png");
@@ -158,23 +131,6 @@ void drawRestart() {
       setLevel();
     }
     setFound();
-  }
-}
-
-void drawCountdown() {
-  int currentTime = millis() - startTime;
-  int currentDuration = levelDuration[currentLevel] * 1000;
-  if(currentTime < currentDuration) {
-    int currentProgress = (int)map(currentTime, 0, currentDuration, 0, width/2);
-    pushStyle();
-    fill(255);
-    rect(width/4, 50, width/2, 10);
-    fill(0);
-    rect(width/4, 50, currentProgress, 10);
-    popStyle();
-  } else {
-    isTimeout = true;
-    hasStarted = false;
   }
 }
 
